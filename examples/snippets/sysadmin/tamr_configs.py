@@ -1,3 +1,4 @@
+"""Getting and setting configuration for Tamr"""
 import tamr_toolbox as tbox
 import paramiko
 import os
