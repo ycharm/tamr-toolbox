@@ -24,7 +24,7 @@ remote_client.connect(
     host_ssh_config["hostname"],
     username=username,
     password="",
-    sock=paramiko.ProxyCommand(host_ssh_config.get("proxycommand")),
+    sock=paramiko.ProxyCommand(host_ssh_config["proxycommand"]),
 )
 
 # Use the created client with Tamr-Toolbox functions
@@ -34,3 +34,4 @@ user_defined_configs = tbox.sysadmin.instance.get_configs(
     remote_client=remote_client,
     impersonation_username="ubuntu",
 )
+print(user_defined_configs)
