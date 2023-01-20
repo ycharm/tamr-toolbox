@@ -23,7 +23,7 @@ class TranslationDictionary:
         standardized_phrase: The unique common standardized version of all original_phrases
         translated_phrase: The translated standardized phrase to the target language of the
             dictionary
-        detected_language: The language detected of the standardized phrase if source lanaguage is
+        detected_language: The language detected of the standardized phrase if source language is
             set to auto
         original_phrases: A set of original phrases which all convert to the standardized phrases
             when applying standardization
@@ -404,7 +404,5 @@ def to_dataset(
                 raise RuntimeError(error_message)
 
     LOGGER.info("Ingesting toolbox translation dictionary to Tamr")
-    dataset.upsert_records(
-        records=to_dict(dictionary), primary_key_name="standardized_phrase",
-    )
+    dataset.upsert_records(records=to_dict(dictionary), primary_key_name="standardized_phrase")
     return dataset.name

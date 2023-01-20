@@ -12,6 +12,7 @@ To specify new project name explicitly:
 """
 
 import os
+import re
 from pathlib import Path
 from typing import Dict, Any
 import argparse
@@ -21,7 +22,7 @@ from tamr_toolbox.utils.client import Client
 from tamr_toolbox.utils.operation import Operation
 
 
-def export_from_tamr(client: Client, *, project_name: str, export_path: str,) -> Operation:
+def export_from_tamr(client: Client, *, project_name: str, export_path: str) -> Operation:
     """
     This function sets path for project artifacts export from Tamr and makes the call to execute
     the export action.
@@ -77,13 +78,8 @@ def main(
     LOGGER.info(op)
 
     ## preparing for the import
-    # finding the path to export file
-    zipfile_name = [
-        f
-        for f in os.listdir(export_path)
-        if (os.path.isfile(os.path.join(export_path, f)) and f.endswith(".zip"))
-    ][0]
-    zipfile_path = f"{export_path}/{zipfile_name}"
+    # finding the path to export file from op JSON response
+    zipfile_path = re.findall(r":\s?(.+\.zip)", op.description)[0]
 
     # constructing the new project name and respective unified dataset name to be imported to tamr
     new_project_name = new_name if new_name else f"{project_name}{postfix}"
@@ -133,7 +129,7 @@ if __name__ == "__main__":
     )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
-        "--new_name", default=None, help="raise to explicitly specify the name of the new project",
+        "--new_name", default=None, help="raise to explicitly specify the name of the new project"
     )
     group.add_argument(
         "--postfix",

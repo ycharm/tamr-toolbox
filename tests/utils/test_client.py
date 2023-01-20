@@ -7,11 +7,8 @@ from tamr_unify_client.auth import UsernamePasswordAuth
 from tamr_toolbox.utils.testing import mock_api
 from tests._common import get_toolbox_root_dir
 
-
 # Provide dummy default for offline tests
-os.environ.setdefault(
-    "TAMR_TOOLBOX_PASSWORD", "none_provided",
-)
+os.environ.setdefault("TAMR_TOOLBOX_PASSWORD", "none_provided")
 
 CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/utils.config.yaml"
@@ -25,7 +22,7 @@ def test_client_create():
     assert my_client.port == int(CONFIG["my_instance_name"]["port"])
     assert my_client.protocol == CONFIG["my_instance_name"]["protocol"]
     assert my_client.base_path == "/api/versioned/v1/"
-    assert my_client.auth == UsernamePasswordAuth("admin", os.environ["TAMR_TOOLBOX_PASSWORD"],)
+    assert my_client.auth == UsernamePasswordAuth("admin", os.environ["TAMR_TOOLBOX_PASSWORD"])
 
 
 @mock_api()
@@ -47,6 +44,19 @@ def test_store_auth_cookie():
     assert my_client.session.auth is None
 
 
+def test_passing_base_path():
+    base_path = "/api/testing/base/path/"
+    my_client = utils.client.create(**CONFIG["my_instance_name"], base_path=base_path)
+    assert my_client.base_path == base_path
+
+
+def test_passing_session():
+    my_client = utils.client.create(**CONFIG["my_instance_name"])
+    session = my_client.session
+    my_other_client = utils.client.create(**CONFIG["my_portless_instance"], session=session)
+    assert my_other_client.session == session
+
+
 @mock_api()
 def test_client_enforce_healthy():
     my_client = utils.client.create(**CONFIG["my_instance_name"], enforce_healthy=True)
@@ -54,7 +64,7 @@ def test_client_enforce_healthy():
     assert my_client.port == int(CONFIG["my_instance_name"]["port"])
     assert my_client.protocol == CONFIG["my_instance_name"]["protocol"]
     assert my_client.base_path == "/api/versioned/v1/"
-    assert my_client.auth == UsernamePasswordAuth("admin", os.environ["TAMR_TOOLBOX_PASSWORD"],)
+    assert my_client.auth == UsernamePasswordAuth("admin", os.environ["TAMR_TOOLBOX_PASSWORD"])
 
 
 @mock_api()
